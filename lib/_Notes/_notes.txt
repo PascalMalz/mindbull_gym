@@ -1,0 +1,78 @@
+Repo Structure to be:
+
+s.: https://chat.openai.com/c/8cc3f2a4-6259-49b2-8392-a281a586193c
+
+lib/
+|-- data/
+|   |-- api/                     # API communication related files
+|   |   |-- audio_api.dart       # Audio API class
+|   |
+|   |-- models/                  # Data models
+|   |   |-- audio_file.dart      # AudioFile model
+|   |
+|   |-- repositories/            # Data repositories
+|   |   |-- audio_repository.dart   # Audio data repository
+|   |
+|   |-- ...
+|
+|-- domain/
+|   |-- entities/               # Domain entities
+|   |   |-- audio_entity.dart   # AudioEntity class
+|   |
+|   |-- repositories/           # Domain repositories
+|   |   |-- audio_repository.dart   # Audio repository interface
+|   |
+|   |-- usecases/               # Domain use cases
+|       |-- fetch_audio_files.dart   # FetchAudioFiles use case
+|       |-- download_audio_file.dart # DownloadAudioFile use case
+|       |-- ...
+|
+|-- presentation/
+|   |-- screens/                # UI screens
+|   |   |-- profile_page.dart   # Profile page UI
+|   |   |-- ...
+|   |
+|   |-- ...
+|
+|-- main.dart                   # App entry point
+
+
+
+Check Key
+C:\Users\pam\.android\debug.keystore
+keytool -list -v -keystore "C:\Users\pam\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
+
+keytool -genkeypair -v -keystore mindbull.keystore -keyalg RSA -keysize 2048 -validity 10000 -alias mindbull
+
+cd C:/Users/pam/self_code/android
+keytool -genkey -v -keystore mykey.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias mindBullDebugKey
+keyPassword= storePassword= android
+
+drag/drop file in folder app
+
+./gradlew signingReport
+
+keytool -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
+keytool -list -v -keystore "C:\Users\pam\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
+
+
+keytool -list -v -keystore your_keystore_name -alias your_alias_name
+keytool -list -v -keystore "C:\Users\pam\.android\debug.keystore" -alias androiddebugkey
+
+PS C:\Users\pam\mindbull\android> keytool -list -v -keystore "C:\Users\pam\.android\debug.keystore" -alias androiddebugkey
+Enter keystore password:
+Alias name: androiddebugkey
+Creation date: May 11, 2023
+Entry type: PrivateKeyEntry
+Certificate chain length: 1
+Certificate[1]:
+Owner: C=US, O=Android, CN=Android Debug
+Issuer: C=US, O=Android, CN=Android Debug
+Serial number: 1
+Valid from: Thu May 11 22:52:34 CEST 2023 until: Sat May 03 22:52:34 CEST 2053
+Certificate fingerprints:
+         SHA1: BC:71:2E:FE:79:E7:9A:70:89:57:3A:43:D1:D3:20:98:90:26:04:06
+         SHA256: 50:34:99:92:79:C2:A8:78:44:0D:08:10:F9:3F:D1:63:E8:3A:7E:BC:21:14:88:A3:45:49:E9:A9:92:FE:E9:C3
+Signature algorithm name: SHA256withRSA
+Subject Public Key Algorithm: 2048-bit RSA key
+Version: 1
