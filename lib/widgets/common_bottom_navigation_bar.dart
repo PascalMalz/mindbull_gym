@@ -6,7 +6,6 @@
 // Filename: common_bottom_navigation_bar.dart
 //todo when click on profile page the loginscreen forwards to /authorization, but this flow should be managed by commonwidget
 
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:self_code/pages/home_page.dart';
@@ -28,18 +27,17 @@ class CommonBottomNavigationBar extends StatefulWidget {
   final Widget child;
   final int currentIndex;
 
-
   CommonBottomNavigationBar({
     required this.child,
     required this.currentIndex,
   });
 
   @override
-  _CommonBottomNavigationBarState createState() => _CommonBottomNavigationBarState();
+  _CommonBottomNavigationBarState createState() =>
+      _CommonBottomNavigationBarState();
 }
 
-class _CommonBottomNavigationBarState extends State<CommonBottomNavigationBar>  {
-
+class _CommonBottomNavigationBarState extends State<CommonBottomNavigationBar> {
   int _selectedIndex;
   _CommonBottomNavigationBarState() : _selectedIndex = 0;
   @override
@@ -83,7 +81,8 @@ class _CommonBottomNavigationBarState extends State<CommonBottomNavigationBar>  
   }
 
   Future<void> _onItemTapped(int index) async {
-    final userId = Provider.of<UserDataProvider>(context, listen: false).currentUser?.id;
+    final userId =
+        Provider.of<UserDataProvider>(context, listen: false).currentUser?.id;
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     bool initialized = true;
     setState(() {
@@ -91,38 +90,39 @@ class _CommonBottomNavigationBarState extends State<CommonBottomNavigationBar>  
         // Initialize the page if it has not been initialized
         switch (index) {
           case 1:
-            _pages[index] = MusicLibraryHomeScreen();//LogScreen();
+            _pages[index] = MusicLibraryHomeScreen(); //LogScreen();
             break;
           case 2:
             _pages[index] = AudioRecorder();
             break;
           case 3:
-            _pages[index] = AudioFileListScreen(title: '',);
+            _pages[index] = AudioFileListScreen(
+              title: '',
+            );
             break;
           case 4:
-            _pages[index] = AudioLibrary();//ViewDataPage();//MediaEditorPage();
+            _pages[index] =
+                AudioLibrary(); //ViewDataPage();//MediaEditorPage();
             break;
           case 5:
-          // Initialize the profile page only if the user is authorized
+            // Initialize the profile page only if the user is authorized
 
             Future<void> handleProfilePage() async {
-              bool isAuthorized =  await checkAuthorization(context);
-              print('CommonWrapper: _onItemTapped: isAuthorized = $isAuthorized');
+              bool isAuthorized = await checkAuthorization(context);
+              print(
+                  'CommonWrapper: _onItemTapped: isAuthorized = $isAuthorized');
               if (isAuthorized) {
                 _pages[index] = ProfilePage(userId: userId);
               }
               if (await authProvider.isLoggedIn) {
                 _pages[index] = ProfilePage(userId: userId);
-              }else{
-
-              }
-              setState(() {
-
-              });
+              } else {}
+              setState(() {});
             }
             initialized = false;
             handleProfilePage();
-            _pages[index] = LoginPromptPage(onLoginPressed: () => _onItemTapped(5));
+            _pages[index] =
+                LoginPromptPage(onLoginPressed: () => _onItemTapped(5));
 
             break;
         }
@@ -138,7 +138,8 @@ class _CommonBottomNavigationBarState extends State<CommonBottomNavigationBar>  
       builder: (context, userDataProvider, _) {
         ImageProvider? _profileImage;
         final user = userDataProvider.currentUser;
-        print('CommonBottomNavigationBar userDataProvider.user.username: ${userDataProvider.currentUser?.username}');
+        print(
+            'CommonBottomNavigationBar userDataProvider.user.username: ${userDataProvider.currentUser?.username}');
         if (user != null && user.profilePictureUrl != null) {
           _profileImage = NetworkImage(user.profilePictureUrl!);
         } else {
@@ -149,10 +150,10 @@ class _CommonBottomNavigationBarState extends State<CommonBottomNavigationBar>  
           body: _pages[_selectedIndex] ?? Container(),
           bottomNavigationBar: DecoratedBox(
             decoration: BoxDecoration(
-          border: Border.all(
-          color: Colors.black, // Color of the border
-          width: 1.0, // Thickness of the border
-          ),
+              border: Border.all(
+                color: Colors.black, // Color of the border
+                width: 1.0, // Thickness of the border
+              ),
               //borderRadius: BorderRadius.circular(15.0), // Radius of the border corners
             ),
             child: Container(

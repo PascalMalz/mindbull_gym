@@ -1,7 +1,5 @@
 //todo chack when it is needed e.g. in local file page I dont use i, but in record page ... Why?
 
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import '../models/audio.dart';
@@ -16,10 +14,11 @@ class SingleAudioProvider extends ChangeNotifier {
 
   SingleAudioProvider()
       : audioFile = Audio(
-      clientAppAudioFilePath : '',
-    id : '',
-      title : '',
-  ) {  // Initialize audioFile within the initializer list
+          clientAppAudioFilePath: '',
+          id: '',
+          title: '',
+        ) {
+    // Initialize audioFile within the initializer list
   }
   @override
   void dispose() {
@@ -28,9 +27,9 @@ class SingleAudioProvider extends ChangeNotifier {
     super.dispose();
   }
 
-void setAudioFile (Audio file) {
-  audioFile = file;
-}
+  void setAudioFile(Audio file) {
+    audioFile = file;
+  }
 
   // Getter for audioFilePath
   int get audioDurationInMilliseconds => _audioDurationInMilliseconds;
@@ -56,9 +55,10 @@ void setAudioFile (Audio file) {
   }
 
   void clearAudio() {
-    audioFile = null;  // Clearing the audioFile
+    audioFile = null; // Clearing the audioFile
     notifyListeners();
   }
+
   void addTagToAudioById(String tag) {
     audioFile?.tags.add(tag);
     notifyListeners();

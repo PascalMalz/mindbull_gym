@@ -8,6 +8,7 @@ import 'package:self_code/pages/after_join.dart';
 import 'package:self_code/pages/audio_library.dart';
 
 import 'package:self_code/pages/home_page.dart';
+import 'package:self_code/pages/home_screen_v2.dart';
 import 'package:self_code/pages/intro.dart';
 import 'package:self_code/pages/join_page.dart';
 import 'package:self_code/pages/jsonPrint.dart';
@@ -52,7 +53,6 @@ import 'api/api_like_post.dart';
 import 'api/api_user_profile_upload.dart';
 import 'api/token_handler.dart';
 
-
 import 'api/token_refresher.dart';
 import 'models/audio.dart';
 import 'models/audio_adapter.dart';
@@ -63,7 +63,6 @@ import 'models/composition_tag_adapter.dart';
 import 'models/personal_growth_characteristic_adapter.dart';
 import 'notifier/scroll_position_notifier.dart';
 import 'provider/record_list_provider.dart';
-
 
 //todo implement Dependency Injection Framework to serve instances of classes over the application
 //todo implement State Management Solution
@@ -80,30 +79,34 @@ Future<void> setupDependencies() async {
   This means that a new instance of RegistrationAPI and SocialAuth will be created each time they are requested via getIt.get<T>()
   */
   try {
-  final tokenApiKeeper = TokenHandler();
-  print('Dependency init');
-  getIt.registerSingleton<TokenHandler>(tokenApiKeeper);
-  //Dependency Injection / registration
-  getIt.registerSingleton<ApiAuthNativeRegistration>(ApiAuthNativeRegistration(tokenApiKeeper));
-  getIt.registerSingleton<ApiAuthSocialLoginAndRegistration>(ApiAuthSocialLoginAndRegistration(tokenApiKeeper));
-  //todo needed anymore?: ApiAuthNativeLogin, ApiAuthSetUsername
-  getIt.registerSingleton<ApiAuthNativeLogin>(ApiAuthNativeLogin(tokenApiKeeper));
-  getIt.registerSingleton<ApiAuthSetUsername>(ApiAuthSetUsername(tokenApiKeeper));
-  getIt.registerSingleton<AuthProvider>(AuthProvider(tokenApiKeeper));
-  //This instance is only instanced when needed:
-  GetIt.I.registerLazySingleton<ApiLikePost>(() => ApiLikePost());
-  GetIt.I.registerLazySingleton<ApiFollowUser>(() => ApiFollowUser());
-  getIt.registerLazySingleton<ApiUserProfileUpload>(() => ApiUserProfileUpload());
+    final tokenApiKeeper = TokenHandler();
+    print('Dependency init');
+    getIt.registerSingleton<TokenHandler>(tokenApiKeeper);
+    //Dependency Injection / registration
+    getIt.registerSingleton<ApiAuthNativeRegistration>(
+        ApiAuthNativeRegistration(tokenApiKeeper));
+    getIt.registerSingleton<ApiAuthSocialLoginAndRegistration>(
+        ApiAuthSocialLoginAndRegistration(tokenApiKeeper));
+    //todo needed anymore?: ApiAuthNativeLogin, ApiAuthSetUsername
+    getIt.registerSingleton<ApiAuthNativeLogin>(
+        ApiAuthNativeLogin(tokenApiKeeper));
+    getIt.registerSingleton<ApiAuthSetUsername>(
+        ApiAuthSetUsername(tokenApiKeeper));
+    getIt.registerSingleton<AuthProvider>(AuthProvider(tokenApiKeeper));
+    //This instance is only instanced when needed:
+    GetIt.I.registerLazySingleton<ApiLikePost>(() => ApiLikePost());
+    GetIt.I.registerLazySingleton<ApiFollowUser>(() => ApiFollowUser());
+    getIt.registerLazySingleton<ApiUserProfileUpload>(
+        () => ApiUserProfileUpload());
 
-  getIt.registerSingleton<UserDataProvider>(UserDataProvider(getIt.get<AuthProvider>()));
-  getIt.registerSingleton<TokenRefresher>(TokenRefresher());
-  final sharedPreferences = await SharedPreferences.getInstance();
-  getIt.registerSingleton<SharedPreferences>(sharedPreferences);
-
+    getIt.registerSingleton<UserDataProvider>(
+        UserDataProvider(getIt.get<AuthProvider>()));
+    getIt.registerSingleton<TokenRefresher>(TokenRefresher());
+    final sharedPreferences = await SharedPreferences.getInstance();
+    getIt.registerSingleton<SharedPreferences>(sharedPreferences);
   } catch (e) {
     print("Main: Error setting up dependencies: $e");
   }
-
 }
 
 //todo do I also have to load refresh tokens?
@@ -120,7 +123,6 @@ Future<void> loadTokens() async {
 }
 
 Future<void> main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   // initialize hive
   await Hive.initFlutter();
@@ -134,8 +136,6 @@ Future<void> main() async {
   var metadataBox = await Hive.openBox<Audio>('audioMetadata');
   var compositionBox = await Hive.openBox<Composition>('compositionMetadata');
   var characteristicsBox = await Hive.openBox('characteristicsRatingsBox');
-
-
 
   print('main() called');
   print(StackTrace.current);
@@ -154,27 +154,35 @@ Future<void> main() async {
         print('Token available, user data loading...');
         final userDataProvider = getIt.get<UserDataProvider>();
         userDataProvider.loadUserData();
-        print('logged in with userDataProvider.user?.username: ${userDataProvider.currentUser?.username}');
+        print(
+            'logged in with userDataProvider.user?.username: ${userDataProvider.currentUser?.username}');
         // If additional validation is needed (like checking with backend), include it here
       }
       runApp(
         MultiProvider(
           providers: [
-            ChangeNotifierProvider(create: (_) => getIt.get<AuthProvider>()), // Register AuthProvider
-            ChangeNotifierProvider(create: (_) => UserDataProvider(getIt.get<AuthProvider>())),
+            ChangeNotifierProvider(
+                create: (_) =>
+                    getIt.get<AuthProvider>()), // Register AuthProvider
+            ChangeNotifierProvider(
+                create: (_) => UserDataProvider(getIt.get<AuthProvider>())),
             ChangeNotifierProvider(create: (context) => AudioListProvider()),
-            ChangeNotifierProvider(create: (context) => RecordListProvider(metadataBox)),
+            ChangeNotifierProvider(
+                create: (context) => RecordListProvider(metadataBox)),
             ChangeNotifierProvider(create: (context) => MediaListProvider()),
-            ChangeNotifierProvider(create: (context) => SingleImageProvider ()),
+            ChangeNotifierProvider(create: (context) => SingleImageProvider()),
             ChangeNotifierProvider(create: (context) => MediaTrackProvider()),
-            ChangeNotifierProvider(create: (context) => ScrollPositionNotifier()),
+            ChangeNotifierProvider(
+                create: (context) => ScrollPositionNotifier()),
             ChangeNotifierProvider(create: (context) => SingleAudioProvider()),
             ChangeNotifierProvider(create: (context) => LocalFilesProvider()),
-            ChangeNotifierProvider(create: (context) => CharacteristicsProvider()),
+            ChangeNotifierProvider(
+                create: (context) => CharacteristicsProvider()),
             ChangeNotifierProvider(create: (context) => SingleVideoProvider()),
             // Add other providers here if needed
           ],
-          child: CustomMaterialApp(),  // You can include the lifecycle hooks here
+          child:
+              CustomMaterialApp(), // You can include the lifecycle hooks here
         ),
       );
     });
@@ -191,15 +199,14 @@ Future<void> main() async {
     tokenRefresher.initiateTokenRefreshTimers();
   }*/
 
-
-
 // CustomMaterialApp now extends StatefulWidget
 class CustomMaterialApp extends StatefulWidget {
   @override
   _CustomMaterialAppState createState() => _CustomMaterialAppState();
 }
 
-class _CustomMaterialAppState extends State<CustomMaterialApp> with WidgetsBindingObserver {
+class _CustomMaterialAppState extends State<CustomMaterialApp>
+    with WidgetsBindingObserver {
   //<-- Functionality to keep authentication working when app in background ect.
   final AuthProvider _authProvider = getIt.get<AuthProvider>();
 
@@ -229,12 +236,12 @@ class _CustomMaterialAppState extends State<CustomMaterialApp> with WidgetsBindi
     final userDataProvider = getIt.get<UserDataProvider>();
     await userDataProvider.loadUserData();
   }
+
   //----<
   @override
   Widget build(BuildContext context) {
     DirectoryCheck();
     return MaterialApp(
-
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
@@ -242,7 +249,7 @@ class _CustomMaterialAppState extends State<CustomMaterialApp> with WidgetsBindi
         fontFamily: 'Roboto',
       ),
       routes: {
-        '/': (context) => HomeScreen(),
+        '/': (context) => HomeScreenV2(),
         '/record': (context) => AudioRecorder(),
         '/join': (context) => JoinPage(),
         '/join_list': (context) => AudioFileListScreen(title: 'Mix it up'),
@@ -257,7 +264,7 @@ class _CustomMaterialAppState extends State<CustomMaterialApp> with WidgetsBindi
         '/compositionPostPage': (context) => CompositionPostPage(),
         '/postVideoScreen': (context) => PostVideoScreen(),
         '/postSingleAffirmation': (context) => PostSingleAffirmation(),
-    '/profile': (context, {arguments}) {
+        '/profile': (context, {arguments}) {
           final userId = arguments?['userId'] as String?;
           return ProfilePage(userId: userId);
         },

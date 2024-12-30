@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -41,7 +40,6 @@ class _PostSingleAffirmationState extends State<PostSingleAffirmation> {
     descriptionController.addListener(_updateDescription);
   }
 
-
   void _updateDescription() {
     if (mounted) {
       setState(() {
@@ -57,7 +55,6 @@ class _PostSingleAffirmationState extends State<PostSingleAffirmation> {
     audioTagController.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -76,13 +73,16 @@ class _PostSingleAffirmationState extends State<PostSingleAffirmation> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildCompositionUploadOptions('Select Image \n (Optional)', Icons.video_library, () => _pickImage(imageProvider)),
-                    _buildCompositionUploadOptions('Select Audio', Icons.record_voice_over, () => _pickAudio(audioProvider)),
+                    _buildCompositionUploadOptions('Select Image \n (Optional)',
+                        Icons.video_library, () => _pickImage(imageProvider)),
+                    _buildCompositionUploadOptions(
+                        'Select Audio',
+                        Icons.record_voice_over,
+                        () => _pickAudio(audioProvider)),
                   ],
                 ),
                 TextFormField(
@@ -109,14 +109,18 @@ class _PostSingleAffirmationState extends State<PostSingleAffirmation> {
                 ),
                 SizedBox(height: 20),
                 //Divider(thickness:1, color: Colors.black,),
-                Text('Post Preview:',style: TextStyle(fontSize: 20),),
+                Text(
+                  'Post Preview:',
+                  style: TextStyle(fontSize: 20),
+                ),
                 // Submit Button
                 ValueListenableBuilder(
                   valueListenable: audioProvider.descriptionController,
                   builder: (context, TextEditingValue value, child) {
                     return PostCard(
                       key: ValueKey(value.text),
-                      previewAudio: audioProvider.audioFile, // Assuming selectedAudio is the Audio object from the provider
+                      previewAudio: audioProvider
+                          .audioFile, // Assuming selectedAudio is the Audio object from the provider
                       previewImage: imageProvider.getImage(),
                       // Directly update widget's post field
                       post: Post(
@@ -128,9 +132,7 @@ class _PostSingleAffirmationState extends State<PostSingleAffirmation> {
                   },
                 ),
 
-
                 SizedBox(height: 16),
-
               ],
             ),
           ),
@@ -141,40 +143,49 @@ class _PostSingleAffirmationState extends State<PostSingleAffirmation> {
 
   Future<void> _postContent() async {
     if (_formKey.currentState!.validate()) {
-      final imageProvider = Provider.of<SingleImageProvider>(context, listen: false);
-      final audioProvider = Provider.of<SingleAudioProvider>(context, listen: false);
+      final imageProvider =
+          Provider.of<SingleImageProvider>(context, listen: false);
+      final audioProvider =
+          Provider.of<SingleAudioProvider>(context, listen: false);
 
       final imageFilePath = imageProvider.imagePath;
       final audioFilePath = audioProvider.audioFilePath;
       final description = audioProvider.descriptionController.text;
-      final tags = [audioProvider.audioTagController.text]; // Assuming single tag for simplicity
+      final tags = [
+        audioProvider.audioTagController.text
+      ]; // Assuming single tag for simplicity
       final durationInMilliseconds = audioProvider.audioDurationInMilliseconds;
       if (imageFilePath != null && audioFilePath != null) {
         File imageFile = File(imageFilePath);
         File audioFile = File(audioFilePath);
 
         // Use the ApiPostScreenImageAudio to upload the post
-        String? result = await ApiPostScreenImageAudio().uploadPostWithMedia(imageFile, audioFile, description, tags, durationInMilliseconds);
+        String? result = await ApiPostScreenImageAudio().uploadPostWithMedia(
+            imageFile, audioFile, description, tags, durationInMilliseconds);
 
         // Handle the result accordingly
         if (result == null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Post with media uploaded successfully")));
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Post with media uploaded successfully")));
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $result")));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text("Error: $result")));
         }
       }
     }
   }
 
   Future<void> _pickImage(SingleImageProvider imageProvider) async {
-    final pickedFile = await _imagePicker.pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await _imagePicker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       imageProvider.setImagePath(pickedFile.path);
     }
   }
 
   Future<void> _pickAudio(SingleAudioProvider audioProvider) async {
-    final audioListModel = Provider.of<AudioListProvider>(context, listen: false);
+    final audioListModel =
+        Provider.of<AudioListProvider>(context, listen: false);
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -186,11 +197,20 @@ class _PostSingleAffirmationState extends State<PostSingleAffirmation> {
               onPressed: () async {
                 Navigator.of(context).pop();
                 FilePickerResult? pickedFile =
-                await FilePicker.platform.pickFiles(
+                    await FilePicker.platform.pickFiles(
                   type: FileType.custom,
-                  allowedExtensions: {'mp3', 'wav', 'aac', 'm4a', 'flac', 'ogg', 'wma'}.toList(),
+                  allowedExtensions: {
+                    'mp3',
+                    'wav',
+                    'aac',
+                    'm4a',
+                    'flac',
+                    'ogg',
+                    'wma'
+                  }.toList(),
                 );
-                if (pickedFile != null && pickedFile.files.single.path != null) {
+                if (pickedFile != null &&
+                    pickedFile.files.single.path != null) {
                   String path = pickedFile.files.single.path!;
                   audioProvider.setAudioFilePath(path);
 
@@ -204,7 +224,8 @@ class _PostSingleAffirmationState extends State<PostSingleAffirmation> {
                     final duration = audioPlayer.duration;
                     if (duration != null) {
                       // Set the duration in milliseconds
-                      audioProvider.setAudioDurationInMilliseconds(duration.inMilliseconds);
+                      audioProvider.setAudioDurationInMilliseconds(
+                          duration.inMilliseconds);
                     }
                   } catch (e) {
                     // Handle the error, e.g., file is not an audio file or file is corrupt
@@ -222,12 +243,14 @@ class _PostSingleAffirmationState extends State<PostSingleAffirmation> {
                 final Audio? selectedAudioFile = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LocalFilesPage(filter: DisplayFilter.audio),
+                    builder: (context) =>
+                        LocalFilesPage(filter: DisplayFilter.audio),
                   ),
                 );
                 if (selectedAudioFile != null) {
-                  audioProvider.setAudioFilePath(selectedAudioFile.clientAppAudioFilePath);
-                  audioListModel.addCompositionAudio(selectedAudioFile,0,1);
+                  audioProvider.setAudioFilePath(
+                      selectedAudioFile.clientAppAudioFilePath);
+                  audioListModel.addCompositionAudio(selectedAudioFile, 0, 1);
                   print(selectedAudioFile.toString());
                 }
                 Navigator.of(context).pop();
@@ -241,7 +264,8 @@ class _PostSingleAffirmationState extends State<PostSingleAffirmation> {
   }
 }
 
-Widget _buildCompositionUploadOptions(String label, IconData icon, VoidCallback onPressed) {
+Widget _buildCompositionUploadOptions(
+    String label, IconData icon, VoidCallback onPressed) {
   return Column(
     mainAxisSize: MainAxisSize.min,
     children: [
@@ -250,13 +274,14 @@ Widget _buildCompositionUploadOptions(String label, IconData icon, VoidCallback 
         child: CircleAvatar(
           radius: 30, // Adjust the size of the circle here
           backgroundColor: Colors.deepPurple,
-          child: Icon(icon, size: 30, color: Colors.white), // Adjust icon size here
+          child: Icon(icon,
+              size: 30, color: Colors.white), // Adjust icon size here
         ),
       ),
       SizedBox(height: 8),
       Text(
         label,
-        textAlign: TextAlign.center,  // Center align text
+        textAlign: TextAlign.center, // Center align text
         style: TextStyle(
           color: Colors.black,
           fontWeight: FontWeight.normal,

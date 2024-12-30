@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -46,7 +45,6 @@ class _CompositionPostPageState extends State<CompositionPostPage> {
     descriptionController.addListener(_updateDescription);
   }
 
-
   void _updateDescription() {
     if (mounted) {
       setState(() {
@@ -84,8 +82,10 @@ class _CompositionPostPageState extends State<CompositionPostPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildCompositionUploadOptions('Select Image \n (Optional)', Icons.video_library, () => _pickImage(imageProvider)),
-                    _buildCompositionUploadOptions('Select Audio', Icons.library_music, () => _pickAudio(audioProvider)),
+                    _buildCompositionUploadOptions('Select Image \n (Optional)',
+                        Icons.video_library, () => _pickImage(imageProvider)),
+                    _buildCompositionUploadOptions('Select Audio',
+                        Icons.library_music, () => _pickAudio(audioProvider)),
                   ],
                 ),
                 TextFormField(
@@ -112,7 +112,10 @@ class _CompositionPostPageState extends State<CompositionPostPage> {
                 ),
                 SizedBox(height: 20),
                 //Divider(thickness:1, color: Colors.black,),
-                Text('Post Preview:',style: TextStyle(fontSize: 20),),
+                Text(
+                  'Post Preview:',
+                  style: TextStyle(fontSize: 20),
+                ),
                 // Submit Button
 
                 ValueListenableBuilder(
@@ -120,18 +123,18 @@ class _CompositionPostPageState extends State<CompositionPostPage> {
                   builder: (context, TextEditingValue value, child) {
                     return PostCard(
                       key: ValueKey(value.text),
-                      previewAudio: audioProvider.audioFile, // Assuming selectedAudio is the Audio object from the provider
+                      previewAudio: audioProvider
+                          .audioFile, // Assuming selectedAudio is the Audio object from the provider
                       previewImage: imageProvider.getImage(),
                       // Directly update widget's post field
-                        post: Post(
-                          content: value.text,
-                          createdAt: DateTime.now(),
-                          username: userDataProvider.currentUser?.username,
+                      post: Post(
+                        content: value.text,
+                        createdAt: DateTime.now(),
+                        username: userDataProvider.currentUser?.username,
                       ),
                     );
                   },
                 ),
-
               ],
             ),
           ),
@@ -142,13 +145,17 @@ class _CompositionPostPageState extends State<CompositionPostPage> {
 
   Future<void> _postContent() async {
     if (_formKey.currentState!.validate()) {
-      final imageProvider = Provider.of<SingleImageProvider>(context, listen: false);
-      final audioProvider = Provider.of<SingleAudioProvider>(context, listen: false);
+      final imageProvider =
+          Provider.of<SingleImageProvider>(context, listen: false);
+      final audioProvider =
+          Provider.of<SingleAudioProvider>(context, listen: false);
 
       final imageFilePath = imageProvider.imagePath;
       final audioFilePath = audioProvider.audioFilePath;
       final description = audioProvider.descriptionController.text;
-      final tags = [audioProvider.audioTagController.text]; // Assuming single tag for simplicity
+      final tags = [
+        audioProvider.audioTagController.text
+      ]; // Assuming single tag for simplicity
       final durationInMilliseconds = audioProvider.audioDurationInMilliseconds;
 
       String? result;
@@ -180,24 +187,29 @@ class _CompositionPostPageState extends State<CompositionPostPage> {
 
       // Now, 'result' will not be null if any of the above conditions were true and returned a value
       if (result != null && result.startsWith("Error")) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result)));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(result)));
       } else if (result == "Post uploaded successfully") {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result!)));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(result!)));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Unexpected error occurred: $result")));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Unexpected error occurred: $result")));
       }
     }
   }
 
   Future<void> _pickImage(SingleImageProvider imageProvider) async {
-    final pickedFile = await _imagePicker.pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await _imagePicker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       imageProvider.setImagePath(pickedFile.path);
     }
   }
 
   Future<void> _pickAudio(SingleAudioProvider audioProvider) async {
-    final audioListModel = Provider.of<AudioListProvider>(context, listen: false);
+    final audioListModel =
+        Provider.of<AudioListProvider>(context, listen: false);
 
     showDialog(
       context: context,
@@ -210,11 +222,20 @@ class _CompositionPostPageState extends State<CompositionPostPage> {
               onPressed: () async {
                 Navigator.of(context).pop();
                 FilePickerResult? pickedFile =
-                await FilePicker.platform.pickFiles(
+                    await FilePicker.platform.pickFiles(
                   type: FileType.custom,
-                  allowedExtensions: {'mp3', 'wav', 'aac', 'm4a', 'flac', 'ogg', 'wma'}.toList(),
+                  allowedExtensions: {
+                    'mp3',
+                    'wav',
+                    'aac',
+                    'm4a',
+                    'flac',
+                    'ogg',
+                    'wma'
+                  }.toList(),
                 );
-                if (pickedFile != null && pickedFile.files.single.path != null) {
+                if (pickedFile != null &&
+                    pickedFile.files.single.path != null) {
                   String path = pickedFile.files.single.path!;
                   audioProvider.setAudioFilePath(path);
 
@@ -228,7 +249,8 @@ class _CompositionPostPageState extends State<CompositionPostPage> {
                     final duration = audioPlayer.duration;
                     if (duration != null) {
                       // Set the duration in milliseconds
-                      audioProvider.setAudioDurationInMilliseconds(duration.inMilliseconds);
+                      audioProvider.setAudioDurationInMilliseconds(
+                          duration.inMilliseconds);
                     }
                   } catch (e) {
                     // Handle the error, e.g., file is not an audio file or file is corrupt
@@ -246,22 +268,27 @@ class _CompositionPostPageState extends State<CompositionPostPage> {
                 dynamic selectedFileOrComposition = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LocalFilesPage(filter: DisplayFilter.composition),
+                    builder: (context) =>
+                        LocalFilesPage(filter: DisplayFilter.composition),
                   ),
                 );
                 if (selectedFileOrComposition is Audio) {
                   setState(() {
-                    selectedAudioFile = selectedFileOrComposition; // Store the selected audio file
+                    selectedAudioFile =
+                        selectedFileOrComposition; // Store the selected audio file
                     selectedComposition = null; // Reset composition selection
                   });
-                  print('selected File is single audio: ${selectedFileOrComposition.id}');
+                  print(
+                      'selected File is single audio: ${selectedFileOrComposition.id}');
                 } else if (selectedFileOrComposition is Composition) {
                   setState(() {
-                    selectedComposition = selectedFileOrComposition; // Store the selected composition
+                    selectedComposition =
+                        selectedFileOrComposition; // Store the selected composition
                     selectedAudioFile = null; // Reset audio file selection
                   });
                   Composition composition = selectedFileOrComposition;
-                  print("selected File is Composition: ${selectedFileOrComposition.id}");
+                  print(
+                      "selected File is Composition: ${selectedFileOrComposition.id}");
                 } else {
                   // Handle error or unexpected type
                   print("Unknown type returned from LocalFilesPage");
@@ -277,7 +304,8 @@ class _CompositionPostPageState extends State<CompositionPostPage> {
   }
 }
 
-Widget _buildCompositionUploadOptions(String label, IconData icon, VoidCallback onPressed) {
+Widget _buildCompositionUploadOptions(
+    String label, IconData icon, VoidCallback onPressed) {
   return Column(
     mainAxisSize: MainAxisSize.min,
     children: [
@@ -286,13 +314,14 @@ Widget _buildCompositionUploadOptions(String label, IconData icon, VoidCallback 
         child: CircleAvatar(
           radius: 30, // Adjust the size of the circle here
           backgroundColor: Colors.deepPurple,
-          child: Icon(icon, size: 30, color: Colors.white), // Adjust icon size here
+          child: Icon(icon,
+              size: 30, color: Colors.white), // Adjust icon size here
         ),
       ),
       SizedBox(height: 8),
       Text(
         label,
-        textAlign: TextAlign.center,  // Center align text
+        textAlign: TextAlign.center, // Center align text
         style: TextStyle(
           color: Colors.black,
           fontWeight: FontWeight.normal,
