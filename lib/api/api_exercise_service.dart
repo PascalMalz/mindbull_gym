@@ -19,6 +19,8 @@ class ApiExerciseService {
       String baseUrl = 'https://neurotune.de/api/exercises/';
       Map<String, dynamic> queryParameters = {
         'exercise_type': exerciseType,
+        'ordering':
+            'duration', // Query to order exercises by duration ascending
       };
 
       print(
