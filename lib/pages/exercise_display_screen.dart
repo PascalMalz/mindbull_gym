@@ -1,6 +1,9 @@
 // Filename: exercise_display_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:self_code/pages/post/full_screen_post_view.dart';
+import 'package:self_code/pages/post/post_screen_composition.dart';
+import 'package:self_code/pages/post/posts_audio_image_display_screen.dart';
 import '../api/api_exercise_service.dart';
 import '../models/exercise.dart';
 import '../widgets/exercise_card.dart';
@@ -64,25 +67,53 @@ class _ExerciseDisplayScreenState extends State<ExerciseDisplayScreen> {
       backgroundColor: Colors.white,
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : exercises.isEmpty
-              ? Center(
-                  child: Text(
-                    'No exercises available',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                )
-              : RefreshIndicator(
-                  onRefresh: _fetchExercises,
-                  child: ListView.builder(
-                    itemCount: exercises.length,
-                    itemBuilder: (context, index) {
-                      return ExerciseCard(
-                        exercise: exercises[index],
-                        autoplayEnabled: widget.autoplayEnabled,
-                      );
-                    },
-                  ),
-                ),
+          : RefreshIndicator(
+              onRefresh: _fetchExercises,
+              child: ListView.builder(
+                itemCount: exercises.length + 2, // Add one for the button
+                itemBuilder: (context, index) {
+                  if (index == exercises.length) {
+                    // Render the button as the last item in the list
+                    return Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: ElevatedButton.icon(
+                        icon: Icon(Icons.add),
+                        label: Text("Add Exclusive Exercises"),
+                        onPressed: () {
+                          // Handle adding exclusive exercise logic
+                          print("Add Exclusive Exercise clicked");
+                        },
+                      ),
+                    );
+                  }
+                  if (index == exercises.length + 1) {
+                    // Render the button as the last item in the list
+                    return Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: ElevatedButton.icon(
+                        icon: Icon(Icons.add),
+                        label: Text("Add Community Material"),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    PostsAudioImageDisplayScreen(
+                                        autoplayEnabled: false)),
+                          );
+                          // Handle adding exclusive exercise logic
+                          print("Add Community Material");
+                        },
+                      ),
+                    );
+                  }
+                  // Render exercise cards
+                  return ExerciseCard(
+                    exercise: exercises[index],
+                    autoplayEnabled: widget.autoplayEnabled,
+                  );
+                },
+              ),
+            ),
     );
   }
 }

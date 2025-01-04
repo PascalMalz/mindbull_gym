@@ -21,14 +21,17 @@ class PostsAudioImageDisplayScreen extends StatefulWidget {
     this.tags,
     this.category,
     this.characteristics,
-    this.showLikedPostsOnly = false, // Default to false to preserve existing functionality
+    this.showLikedPostsOnly =
+        false, // Default to false to preserve existing functionality
   }) : super(key: key);
 
   @override
-  _PostsAudioImageDisplayScreenState createState() => _PostsAudioImageDisplayScreenState();
+  _PostsAudioImageDisplayScreenState createState() =>
+      _PostsAudioImageDisplayScreenState();
 }
 
-class _PostsAudioImageDisplayScreenState extends State<PostsAudioImageDisplayScreen> {
+class _PostsAudioImageDisplayScreenState
+    extends State<PostsAudioImageDisplayScreen> {
   late List<Post> posts;
   bool isLoading = true;
 
@@ -40,7 +43,8 @@ class _PostsAudioImageDisplayScreenState extends State<PostsAudioImageDisplayScr
 
   Future<void> _fetchPosts() async {
     print('_fetchPosts username: ${widget.userId}');
-    ApiFeedAudioImageService apiFeedAudioImageService = ApiFeedAudioImageService();
+    ApiFeedAudioImageService apiFeedAudioImageService =
+        ApiFeedAudioImageService();
     ApiLikePost apiLikePost = ApiLikePost();
 
     if (widget.showLikedPostsOnly && widget.userId != null) {
@@ -61,7 +65,6 @@ class _PostsAudioImageDisplayScreenState extends State<PostsAudioImageDisplayScr
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,28 +72,32 @@ class _PostsAudioImageDisplayScreenState extends State<PostsAudioImageDisplayScr
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : posts.isEmpty
-          ? Center(child: Text('No posts available', style: TextStyle(color: Colors.white)))
-          : RefreshIndicator(
-        onRefresh: _fetchPosts,
-        child: ListView.builder(
-          itemCount: posts.length,
-          itemBuilder: (context, index) {
-            return InkWell(
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => FullScreenPostView(
-                      posts: posts,
-                      initialIndex: index,
-                    ),
+              ? Center(
+                  child: Text('No posts available',
+                      style: TextStyle(color: Colors.white)))
+              : RefreshIndicator(
+                  onRefresh: _fetchPosts,
+                  child: ListView.builder(
+                    itemCount: posts.length,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => FullScreenPostView(
+                                posts: posts,
+                                initialIndex: index,
+                              ),
+                            ),
+                          );
+                        },
+                        child: PostCard(
+                            post: posts[index],
+                            autoplayEnabled: widget.autoplayEnabled),
+                      );
+                    },
                   ),
-                );
-              },
-              child: PostCard(post: posts[index], autoplayEnabled: widget.autoplayEnabled),
-            );
-          },
-        ),
-      ),
+                ),
     );
   }
 }

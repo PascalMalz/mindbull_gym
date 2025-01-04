@@ -19,6 +19,36 @@ class ExerciseCard extends StatelessWidget {
         'assets/background_sky.jpg'; // Replace with your asset path
     final String imageUrl = exercise.thumbnail ?? defaultImage;
 
+    // Format duration based on value
+    String formatDuration(Duration duration) {
+      int totalSeconds = duration.inSeconds;
+      if (totalSeconds < 60) {
+        return "$totalSeconds sec";
+      } else if (totalSeconds < 3600) {
+        int minutes = totalSeconds ~/ 60;
+        return "$minutes min";
+      } else {
+        int hours = totalSeconds ~/ 3600;
+        return "$hours hr";
+      }
+    }
+
+    // Parse duration string to Duration object
+    Duration duration;
+    try {
+      duration = Duration(
+        hours: int.parse(exercise.duration.split(':')[0]),
+        minutes: int.parse(exercise.duration.split(':')[1]),
+        seconds: int.parse(exercise.duration.split(':')[2]),
+      );
+    } catch (e) {
+      print("Error parsing duration: ${exercise.duration}");
+      duration = Duration.zero; // Fallback to 0 seconds
+    }
+
+    print(
+        "Parsed duration: ${duration.inSeconds} seconds for ${exercise.name}");
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Card(
@@ -100,7 +130,7 @@ class ExerciseCard extends StatelessWidget {
                         SizedBox(width: 4),
                         Flexible(
                           child: Text(
-                            "${exercise.duration}",
+                            formatDuration(duration),
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey,

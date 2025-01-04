@@ -1,0 +1,34 @@
+#To update your development branch from the changes you've made locally in VS Code, and then update the main branch, follow these steps:
+# Step 1: Stage and commit changes on development
+git add .
+git commit -m "Your commit message"
+
+# Step 2: Push development changes
+git push origin development
+
+# Step 3: Switch to main
+git checkout main
+
+# Step 4: Pull latest main (optional, but safe)
+git pull origin main
+
+# Step 5: Merge development into main
+git merge development
+
+# Step 6: Push the updated main
+git push origin main
+
+
+
+in short:
+git add .
+git commit -m "All Exercise Tabs filled with exercises"
+git push origin development
+git checkout main
+git pull origin main
+git merge development
+git push origin main
+
+Gi back to development:
+git checkout development
+git merge main
